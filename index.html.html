@@ -1,1094 +1,2074 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VaibhavStore - Grocery Delivery in 10 Minutes</title>
-<script src="https://cdn.tailwindcss.com/3.4.16"></script>
-<script>tailwind.config={theme:{extend:{colors:{primary:'#2563eb',secondary:'#93c5fd'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-<style>
-:where([class^="ri-"])::before { content: "\f3c2"; }
-body {
-font-family: 'Inter', sans-serif;
-}
-.hide-scrollbar::-webkit-scrollbar {
-display: none;
-}
-.hide-scrollbar {
--ms-overflow-style: none;
-scrollbar-width: none;
-}
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
--webkit-appearance: none;
-margin: 0;
-}
-input[type="number"] {
--moz-appearance: textfield;
-}
-.custom-checkbox {
-appearance: none;
--webkit-appearance: none;
-width: 18px;
-height: 18px;
-border: 2px solid #d1d5db;
-border-radius: 4px;
-outline: none;
-transition: all 0.2s;
-position: relative;
-}
-.custom-checkbox:checked {
-background-color: #2563eb;
-border-color: #2563eb;
-}
-.custom-checkbox:checked::after {
-content: '';
-position: absolute;
-top: 2px;
-left: 5px;
-width: 5px;
-height: 10px;
-border: solid white;
-border-width: 0 2px 2px 0;
-transform: rotate(45deg);
-}
-.custom-switch {
-position: relative;
-display: inline-block;
-width: 44px;
-height: 24px;
-}
-.custom-switch input {
-opacity: 0;
-width: 0;
-height: 0;
-}
-.switch-slider {
-position: absolute;
-cursor: pointer;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background-color: #e5e7eb;
-transition: .4s;
-border-radius: 34px;
-}
-.switch-slider:before {
-position: absolute;
-content: "";
-height: 18px;
-width: 18px;
-left: 3px;
-bottom: 3px;
-background-color: white;
-transition: .4s;
-border-radius: 50%;
-}
-input:checked + .switch-slider {
-background-color: #2563eb;
-}
-input:checked + .switch-slider:before {
-transform: translateX(20px);
-}
-.auth-modal {
-transform: translateY(100%);
-transition: transform 0.3s ease-in-out;
-}
-.auth-modal.show {
-transform: translateY(0);
-}
-.fade-in {
-animation: fadeIn 0.3s ease-in-out;
-}
-@keyframes fadeIn {
-from { opacity: 0; }
-to { opacity: 1; }
-}
-</style>
-</head>
-<body class="bg-gray-50">
-<!-- Header -->
-<header class="sticky top-0 z-50 bg-white shadow-sm">
-<div class="container mx-auto px-4 py-3">
-<div class="flex items-center justify-between">
-<!-- Logo -->
-<div class="flex items-center space-x-3">
-<a href="#" class="text-2xl font-['Pacifico'] text-primary">VaibhavStore</a>
-</div>
-<!-- Location Selector -->
-<div class="hidden md:flex items-center space-x-2 cursor-pointer">
-<div class="w-8 h-8 flex items-center justify-center text-primary">
-<i class="ri-map-pin-line ri-lg"></i>
-</div>
-<div>
-<div class="text-xs text-gray-500">Delivery to</div>
-<div class="text-sm font-medium">Ramnagar, Ghaziabad</div>
-</div>
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-arrow-down-s-line"></i>
-</div>
-</div>
-<!-- Search Bar -->
-<div class="hidden md:flex flex-1 max-w-md mx-4">
-<div class="relative w-full">
-<input type="text" placeholder="Search for items..." class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm">
-<div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400">
-<i class="ri-search-line"></i>
-</div>
-</div>
-</div>
-<!-- Action Buttons -->
-<div class="flex items-center space-x-4">
-<button id="loginBtn" class="hidden md:flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-button hover:bg-gray-100">
-<div class="w-5 h-5 flex items-center justify-center">
-<i class="ri-user-line"></i>
-</div>
-<span>Login</span>
-</button>
-<button id="cartBtn" class="relative flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-button hover:bg-gray-100">
-<div class="w-5 h-5 flex items-center justify-center">
-<i class="ri-shopping-cart-line"></i>
-</div>
-<span class="hidden md:inline">Cart</span>
-<div class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs">0</div>
-</button>
-</div>
-</div>
-<!-- Mobile Search Bar -->
-<div class="md:hidden mt-3">
-<div class="relative w-full">
-<input type="text" placeholder="Search for items..." class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm">
-<div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400">
-<i class="ri-search-line"></i>
-</div>
-</div>
-</div>
-</div>
-</header>
-<!-- Main Content -->
-<main>
-<!-- Hero Banner -->
-<section class="bg-white py-4">
-<div class="container mx-auto px-4">
-<div class="relative rounded-lg overflow-hidden h-40 md:h-64">
-<img src="https://readdy.ai/api/search-image?query=grocery%20delivery%20app%20banner%20with%20fresh%20vegetables%2C%20fruits%2C%20and%20daily%20essentials%20arranged%20beautifully%20with%20a%20blue%20color%20theme%2C%20professional%20e-commerce%20banner%2C%20high-quality%20product%20photography&width=1200&height=400&seq=banner1&orientation=landscape" alt="VaibhavStore Banner" class="w-full h-full object-cover">
-<div class="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center">
-<div class="ml-6 md:ml-12 max-w-md">
-<h1 class="text-white text-2xl md:text-4xl font-bold mb-2">Groceries Delivered in 10 Minutes</h1>
-<p class="text-white text-sm md:text-base mb-4">Order now and get your essentials delivered to your doorstep</p>
-<button class="bg-white text-primary px-4 py-2 rounded-button font-medium text-sm !rounded-button whitespace-nowrap">Order Now</button>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Categories -->
-<section class="py-6 bg-white">
-<div class="container mx-auto px-4">
-<h2 class="text-xl font-bold mb-4">Shop by Category</h2>
-<div class="grid grid-cols-4 md:grid-cols-8 gap-4">
-<a href="#" class="flex flex-col items-center">
-<div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-<img src="https://readdy.ai/api/search-image?query=fresh%20fruits%20assortment%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat1&orientation=squarish" alt="Fruits" class="w-12 h-12 object-contain">
-</div>
-<span class="text-xs text-center">Fruits</span>
-</a>
-<a href="#" class="flex flex-col items-center">
-<div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-2">
-<img src="https://readdy.ai/api/search-image?query=fresh%20vegetables%20assortment%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat2&orientation=squarish" alt="Vegetables" class="w-12 h-12 object-contain">
-</div>
-<span class="text-xs text-center">Vegetables</span>
-</a>
-<a href="#" class="flex flex-col items-center">
-<div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mb-2">
-<img src="https://readdy.ai/api/search-image?query=dairy%20products%20milk%20cheese%20yogurt%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat3&orientation=squarish" alt="Dairy" class="w-12 h-12 object-contain">
-</div>
-<span class="text-xs text-center">Dairy</span>
-</a>
-<a href="#" class="flex flex-col items-center">
-<div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2">
-<img src="https://readdy.ai/api/search-image?query=bakery%20products%20bread%20pastries%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat4&orientation=squarish" alt="Bakery" class="w-12 h-12 object-contain">
-</div>
-<span class="text-xs text-center">Bakery</span>
-</a>
-<a href="#" class="flex flex-col items-center">
-<div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-2">
-<img src="https://readdy.ai/api/search-image?query=snacks%20chips%20cookies%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat5&orientation=squarish" alt="Snacks" class="w-12 h-12 object-contain">
-</div>
-<span class="text-xs text-center">Snacks</span>
-</a>
-<a href="#" class="flex flex-col items-center">
-<div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-2">
-<img src="https://readdy.ai/api/search-image?query=beverages%20drinks%20juices%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat6&orientation=squarish" alt="Beverages" class="w-12 h-12 object-contain">
-</div>
-<span class="text-xs text-center">Beverages</span>
-</a>
-<a href="#" class="flex flex-col items-center">
-<div class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center mb-2">
-<img src="https://readdy.ai/api/search-image?query=household%20cleaning%20products%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat7&orientation=squarish" alt="Household" class="w-12 h-12 object-contain">
-</div>
-<span class="text-xs text-center">Household</span>
-</a>
-<a href="#" class="flex flex-col items-center">
-<div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-apps-line text-indigo-500"></i>
-</div>
-</div>
-<span class="text-xs text-center">More</span>
-</a>
-</div>
-</div>
-</section>
-<!-- Trending Products -->
-<section class="py-6 bg-gray-50">
-<div class="container mx-auto px-4">
-<div class="flex justify-between items-center mb-4">
-<h2 class="text-xl font-bold">Trending Products</h2>
-<a href="#" class="text-primary text-sm font-medium">View All</a>
-</div>
-<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-<!-- Product Card 1 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=fresh%20organic%20apples%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod1&orientation=squarish" alt="Fresh Apples" class="w-full h-full object-cover">
-<div class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">20% OFF</div>
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Fresh Organic Apples</h3>
-<div class="text-xs text-gray-500 mb-2">500g</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹99</span>
-<span class="text-xs text-gray-500 line-through ml-1">₹120</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-<!-- Product Card 2 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=whole%20wheat%20bread%20loaf%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod2&orientation=squarish" alt="Whole Wheat Bread" class="w-full h-full object-cover">
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Whole Wheat Bread</h3>
-<div class="text-xs text-gray-500 mb-2">400g</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹45</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-<!-- Product Card 3 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=full%20cream%20milk%20carton%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod3&orientation=squarish" alt="Full Cream Milk" class="w-full h-full object-cover">
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Full Cream Milk</h3>
-<div class="text-xs text-gray-500 mb-2">1L</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹65</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-<!-- Product Card 4 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=fresh%20tomatoes%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod4&orientation=squarish" alt="Fresh Tomatoes" class="w-full h-full object-cover">
-<div class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">10% OFF</div>
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Fresh Tomatoes</h3>
-<div class="text-xs text-gray-500 mb-2">500g</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹40</span>
-<span class="text-xs text-gray-500 line-through ml-1">₹45</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-<!-- Product Card 5 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=potato%20chips%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod5&orientation=squarish" alt="Potato Chips" class="w-full h-full object-cover">
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Classic Potato Chips</h3>
-<div class="text-xs text-gray-500 mb-2">150g</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹30</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Daily Essentials -->
-<section class="py-6 bg-white">
-<div class="container mx-auto px-4">
-<div class="flex justify-between items-center mb-4">
-<h2 class="text-xl font-bold">Daily Essentials</h2>
-<a href="#" class="text-primary text-sm font-medium">View All</a>
-</div>
-<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-<!-- Product Card 1 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=cooking%20oil%20bottle%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess1&orientation=squarish" alt="Cooking Oil" class="w-full h-full object-cover">
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Refined Cooking Oil</h3>
-<div class="text-xs text-gray-500 mb-2">1L</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹150</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-<!-- Product Card 2 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=basmati%20rice%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess2&orientation=squarish" alt="Basmati Rice" class="w-full h-full object-cover">
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Premium Basmati Rice</h3>
-<div class="text-xs text-gray-500 mb-2">1kg</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹120</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-<!-- Product Card 3 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=sugar%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess3&orientation=squarish" alt="Sugar" class="w-full h-full object-cover">
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Refined Sugar</h3>
-<div class="text-xs text-gray-500 mb-2">1kg</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹55</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-<!-- Product Card 4 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=wheat%20flour%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess4&orientation=squarish" alt="Wheat Flour" class="w-full h-full object-cover">
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Whole Wheat Flour</h3>
-<div class="text-xs text-gray-500 mb-2">5kg</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹220</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-<!-- Product Card 5 -->
-<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-<div class="relative h-36">
-<img src="https://readdy.ai/api/search-image?query=salt%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess5&orientation=squarish" alt="Salt" class="w-full h-full object-cover">
-</div>
-<div class="p-3">
-<h3 class="text-sm font-medium mb-1">Iodized Salt</h3>
-<div class="text-xs text-gray-500 mb-2">1kg</div>
-<div class="flex justify-between items-center">
-<div>
-<span class="text-sm font-bold">₹20</span>
-</div>
-<button class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap">Add</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Special Offers -->
-<section class="py-6 bg-gray-50">
-<div class="container mx-auto px-4">
-<h2 class="text-xl font-bold mb-4">Special Offers</h2>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-<div class="relative h-40">
-<img src="https://readdy.ai/api/search-image?query=fresh%20fruits%20and%20vegetables%20arrangement%20with%20discount%20tag%2C%20promotional%20banner%20with%20blue%20theme&width=400&height=200&seq=offer1&orientation=landscape" alt="Fresh Produce Sale" class="w-full h-full object-cover">
-<div class="absolute inset-0 bg-gradient-to-r from-primary/70 to-transparent flex items-center">
-<div class="p-4 text-white">
-<h3 class="text-lg font-bold mb-1">Fresh Produce Sale</h3>
-<p class="text-sm mb-2">Up to 30% off on fruits & vegetables</p>
-<button class="bg-white text-primary text-xs px-3 py-1 rounded-button font-medium !rounded-button whitespace-nowrap">Shop Now</button>
-</div>
-</div>
-</div>
-</div>
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-<div class="relative h-40">
-<img src="https://readdy.ai/api/search-image?query=dairy%20products%20arrangement%20with%20discount%20tag%2C%20promotional%20banner%20with%20blue%20theme&width=400&height=200&seq=offer2&orientation=landscape" alt="Dairy Delights" class="w-full h-full object-cover">
-<div class="absolute inset-0 bg-gradient-to-r from-primary/70 to-transparent flex items-center">
-<div class="p-4 text-white">
-<h3 class="text-lg font-bold mb-1">Dairy Delights</h3>
-<p class="text-sm mb-2">Buy 2 Get 1 Free on all dairy products</p>
-<button class="bg-white text-primary text-xs px-3 py-1 rounded-button font-medium !rounded-button whitespace-nowrap">Shop Now</button>
-</div>
-</div>
-</div>
-</div>
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-<div class="relative h-40">
-<img src="https://readdy.ai/api/search-image?query=snacks%20and%20beverages%20arrangement%20with%20discount%20tag%2C%20promotional%20banner%20with%20blue%20theme&width=400&height=200&seq=offer3&orientation=landscape" alt="Snack Time Savings" class="w-full h-full object-cover">
-<div class="absolute inset-0 bg-gradient-to-r from-primary/70 to-transparent flex items-center">
-<div class="p-4 text-white">
-<h3 class="text-lg font-bold mb-1">Snack Time Savings</h3>
-<p class="text-sm mb-2">Flat 20% off on snacks & beverages</p>
-<button class="bg-white text-primary text-xs px-3 py-1 rounded-button font-medium !rounded-button whitespace-nowrap">Shop Now</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- App Download -->
-<section class="py-8 bg-primary">
-<div class="container mx-auto px-4">
-<div class="flex flex-col md:flex-row items-center justify-between">
-<div class="text-center md:text-left mb-6 md:mb-0">
-<h2 class="text-2xl font-bold text-white mb-2">Download Our App</h2>
-<p class="text-white/80 mb-4">Get groceries delivered in just 10 minutes!</p>
-<div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-<button class="bg-black text-white px-4 py-2 rounded-button flex items-center justify-center space-x-2 !rounded-button whitespace-nowrap">
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-apple-fill ri-lg"></i>
-</div>
-<div class="text-left">
-<div class="text-xs">Download on the</div>
-<div class="text-sm font-medium">App Store</div>
-</div>
-</button>
-<button class="bg-black text-white px-4 py-2 rounded-button flex items-center justify-center space-x-2 !rounded-button whitespace-nowrap">
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-google-play-fill ri-lg"></i>
-</div>
-<div class="text-left">
-<div class="text-xs">Get it on</div>
-<div class="text-sm font-medium">Google Play</div>
-</div>
-</button>
-</div>
-</div>
-<div class="w-64 md:w-80">
-<img src="https://readdy.ai/api/search-image?query=smartphone%20showing%20grocery%20delivery%20app%20interface%20with%20blue%20theme%2C%20transparent%20background%2C%20professional%20app%20mockup&width=400&height=400&seq=app&orientation=portrait" alt="VaibhavStore App" class="w-full">
-</div>
-</div>
-</div>
-</section>
-<!-- Features -->
-<section class="py-8 bg-white">
-<div class="container mx-auto px-4">
-<h2 class="text-xl font-bold mb-6 text-center">Why Choose VaibhavStore?</h2>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-<div class="flex flex-col items-center text-center">
-<div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-<div class="w-8 h-8 flex items-center justify-center text-primary">
-<i class="ri-time-line ri-xl"></i>
-</div>
-</div>
-<h3 class="text-sm font-medium mb-2">10-Minute Delivery</h3>
-<p class="text-xs text-gray-500">Get your groceries delivered in just 10 minutes</p>
-</div>
-<div class="flex flex-col items-center text-center">
-<div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-<div class="w-8 h-8 flex items-center justify-center text-primary">
-<i class="ri-leaf-line ri-xl"></i>
-</div>
-</div>
-<h3 class="text-sm font-medium mb-2">Fresh Products</h3>
-<p class="text-xs text-gray-500">We source the freshest products daily</p>
-</div>
-<div class="flex flex-col items-center text-center">
-<div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-<div class="w-8 h-8 flex items-center justify-center text-primary">
-<i class="ri-secure-payment-line ri-xl"></i>
-</div>
-</div>
-<h3 class="text-sm font-medium mb-2">Secure Payments</h3>
-<p class="text-xs text-gray-500">Multiple secure payment options available</p>
-</div>
-<div class="flex flex-col items-center text-center">
-<div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-<div class="w-8 h-8 flex items-center justify-center text-primary">
-<i class="ri-customer-service-2-line ri-xl"></i>
-</div>
-</div>
-<h3 class="text-sm font-medium mb-2">24/7 Support</h3>
-<p class="text-xs text-gray-500">Our customer support team is always available</p>
-</div>
-</div>
-</div>
-</section>
-</main>
-<!-- Footer -->
-<footer class="bg-gray-800 text-white pt-10 pb-6">
-<div class="container mx-auto px-4">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-<div>
-<h3 class="text-lg font-medium mb-4">VaibhavStore</h3>
-<ul class="space-y-2">
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">About Us</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Careers</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Blog</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Press</a></li>
-</ul>
-</div>
-<div>
-<h3 class="text-lg font-medium mb-4">Help</h3>
-<ul class="space-y-2">
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Payments</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Shipping</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Cancellation & Returns</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">FAQ</a></li>
-</ul>
-</div>
-<div>
-<h3 class="text-lg font-medium mb-4">Policy</h3>
-<ul class="space-y-2">
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Return Policy</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Terms of Use</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Security</a></li>
-<li><a href="#" class="text-sm text-gray-300 hover:text-white">Privacy</a></li>
-</ul>
-</div>
-<div>
-<h3 class="text-lg font-medium mb-4">Contact Us</h3>
-<ul class="space-y-2">
-<li class="flex items-start space-x-2">
-<div class="w-5 h-5 flex items-center justify-center text-gray-300 mt-0.5">
-<i class="ri-map-pin-line"></i>
-</div>
-<span class="text-sm text-gray-300">Ramnagar, Ghaziabad, Uttar Pradesh, India</span>
-</li>
-<li class="flex items-center space-x-2">
-<div class="w-5 h-5 flex items-center justify-center text-gray-300">
-<i class="ri-phone-line"></i>
-</div>
-<span class="text-sm text-gray-300">+91 93546 52764</span>
-</li>
-<li class="flex items-center space-x-2">
-<div class="w-5 h-5 flex items-center justify-center text-gray-300">
-<i class="ri-mail-line"></i>
-</div>
-<span class="text-sm text-gray-300">support@vaibhavstore.com</span>
-</li>
-</ul>
-</div>
-</div>
-<div class="border-t border-gray-700 pt-6">
-<div class="flex flex-col md:flex-row justify-between items-center">
-<div class="mb-4 md:mb-0">
-<p class="text-sm text-gray-400">© 2025 VaibhavStore. All rights reserved.</p>
-<p class="text-sm text-gray-400 mt-1">Website & App managed by <a href="https://preview--yakeen-digital-genesis.lovable.app/" class="text-primary hover:underline" target="_blank">Yakeen Design Agency</a></p>
-</div>
-<div class="flex space-x-4">
-<div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-<div class="w-4 h-4 flex items-center justify-center text-white">
-<i class="ri-facebook-fill"></i>
-</div>
-</div>
-<div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-<div class="w-4 h-4 flex items-center justify-center text-white">
-<i class="ri-twitter-x-fill"></i>
-</div>
-</div>
-<div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-<div class="w-4 h-4 flex items-center justify-center text-white">
-<i class="ri-instagram-line"></i>
-</div>
-</div>
-<div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-<div class="w-4 h-4 flex items-center justify-center text-white">
-<i class="ri-youtube-fill"></i>
-</div>
-</div>
-</div>
-<div class="mt-4 md:mt-0 flex space-x-3">
-<div class="w-10 h-6 flex items-center justify-center">
-<i class="ri-visa-fill ri-lg text-gray-300"></i>
-</div>
-<div class="w-10 h-6 flex items-center justify-center">
-<i class="ri-mastercard-fill ri-lg text-gray-300"></i>
-</div>
-<div class="w-10 h-6 flex items-center justify-center">
-<i class="ri-paypal-fill ri-lg text-gray-300"></i>
-</div>
-<div class="w-10 h-6 flex items-center justify-center">
-<i class="ri-amazon-pay-fill ri-lg text-gray-300"></i>
-</div>
-</div>
-</div>
-</div>
-</div>
-</footer>
-<!-- Mobile Navigation -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-<div class="flex justify-around">
-<a href="#" class="flex flex-col items-center py-2 px-3 text-primary">
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-home-5-fill"></i>
-</div>
-<span class="text-xs mt-1">Home</span>
-</a>
-<a href="#" class="flex flex-col items-center py-2 px-3 text-gray-500">
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-apps-line"></i>
-</div>
-<span class="text-xs mt-1">Categories</span>
-</a>
-<a href="#" class="flex flex-col items-center py-2 px-3 text-gray-500">
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-search-line"></i>
-</div>
-<span class="text-xs mt-1">Search</span>
-</a>
-<a href="#" class="flex flex-col items-center py-2 px-3 text-gray-500">
-<div class="relative w-6 h-6 flex items-center justify-center">
-<i class="ri-shopping-cart-line"></i>
-<div class="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center text-xs">0</div>
-</div>
-<span class="text-xs mt-1">Cart</span>
-</a>
-<a href="#" class="flex flex-col items-center py-2 px-3 text-gray-500">
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-user-line"></i>
-</div>
-<span class="text-xs mt-1">Account</span>
-</a>
-</div>
-</nav>
-<!-- Auth Modal -->
-<div id="authModal" class="fixed inset-0 z-50 hidden">
-<div class="absolute inset-0 bg-black/50" id="authOverlay"></div>
-<div class="auth-modal absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[90vh] overflow-y-auto">
-<div class="p-6">
-<div class="flex justify-between items-center mb-6">
-<h2 class="text-xl font-bold">Login or Signup</h2>
-<button id="closeAuthBtn" class="w-8 h-8 flex items-center justify-center text-gray-500 rounded-full hover:bg-gray-100">
-<i class="ri-close-line ri-lg"></i>
-</button>
-</div>
-<div id="phoneForm" class="mb-6">
-<label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Enter your phone number</label>
-<div class="flex rounded-button border border-gray-300 overflow-hidden">
-<div class="flex items-center px-3 bg-gray-50 border-r border-gray-300">
-<span class="text-sm font-medium">+91</span>
-</div>
-<input type="number" id="phone" placeholder="Phone number" class="flex-1 py-3 px-4 outline-none text-sm border-none" maxlength="10">
-</div>
-</div>
-<button id="continueBtn" class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap">Continue</button>
-<div id="otpForm" class="hidden mt-6">
-<div class="mb-6">
-<label for="otp" class="block text-sm font-medium text-gray-700 mb-2">Enter the OTP sent to your phone</label>
-<div class="flex space-x-2">
-<input type="number" class="w-12 h-12 rounded-button border border-gray-300 text-center text-lg font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary" maxlength="1">
-<input type="number" class="w-12 h-12 rounded-button border border-gray-300 text-center text-lg font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary" maxlength="1">
-<input type="number" class="w-12 h-12 rounded-button border border-gray-300 text-center text-lg font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary" maxlength="1">
-<input type="number" class="w-12 h-12 rounded-button border border-gray-300 text-center text-lg font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary" maxlength="1">
-</div>
-</div>
-<button id="verifyBtn" class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap">Verify OTP</button>
-<div class="mt-4 text-center">
-<span class="text-sm text-gray-600">Didn't receive OTP?</span>
-<button class="text-sm text-primary font-medium ml-1">Resend</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Cart Sidebar -->
-<div id="cartSidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
-<div class="flex flex-col h-full">
-<div class="p-4 border-b border-gray-200 flex justify-between items-center">
-<h2 class="text-lg font-bold">Your Cart</h2>
-<button id="closeCartBtn" class="w-8 h-8 flex items-center justify-center text-gray-500 rounded-full hover:bg-gray-100">
-<i class="ri-close-line ri-lg"></i>
-</button>
-</div>
-<div id="emptyCart" class="flex-1 flex flex-col items-center justify-center p-6">
-<div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-<div class="w-12 h-12 flex items-center justify-center text-gray-400">
-<i class="ri-shopping-cart-line ri-2x"></i>
-</div>
-</div>
-<h3 class="text-lg font-medium mb-2">Your cart is empty</h3>
-<p class="text-sm text-gray-500 text-center mb-6">Add items to your cart to proceed with your order</p>
-<button id="startShoppingBtn" class="bg-primary text-white px-6 py-2 rounded-button font-medium !rounded-button whitespace-nowrap">Start Shopping</button>
-</div>
-<div id="cartItems" class="flex-1 overflow-y-auto p-4 hidden">
-<!-- Cart items will be dynamically added here -->
-<div class="border-b border-gray-100 pb-4 mb-4">
-<div class="flex items-center">
-<div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
-<img src="https://readdy.ai/api/search-image?query=fresh%20organic%20apples%20on%20white%20background%2C%20high-quality%20product%20photography&width=100&height=100&seq=cart1&orientation=squarish" alt="Fresh Organic Apples" class="w-full h-full object-cover">
-</div>
-<div class="flex-1">
-<h4 class="text-sm font-medium">Fresh Organic Apples</h4>
-<div class="text-xs text-gray-500">500g</div>
-<div class="flex items-center mt-1">
-<span class="text-sm font-bold">₹99</span>
-<span class="text-xs text-gray-500 line-through ml-1">₹120</span>
-</div>
-</div>
-<div class="flex items-center border border-gray-300 rounded-full overflow-hidden">
-<button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100">
-<i class="ri-subtract-line"></i>
-</button>
-<span class="w-8 text-center text-sm">1</span>
-<button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100">
-<i class="ri-add-line"></i>
-</button>
-</div>
-</div>
-</div>
-<div class="border-b border-gray-100 pb-4 mb-4">
-<div class="flex items-center">
-<div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
-<img src="https://readdy.ai/api/search-image?query=whole%20wheat%20bread%20loaf%20on%20white%20background%2C%20high-quality%20product%20photography&width=100&height=100&seq=cart2&orientation=squarish" alt="Whole Wheat Bread" class="w-full h-full object-cover">
-</div>
-<div class="flex-1">
-<h4 class="text-sm font-medium">Whole Wheat Bread</h4>
-<div class="text-xs text-gray-500">400g</div>
-<div class="flex items-center mt-1">
-<span class="text-sm font-bold">₹45</span>
-</div>
-</div>
-<div class="flex items-center border border-gray-300 rounded-full overflow-hidden">
-<button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100">
-<i class="ri-subtract-line"></i>
-</button>
-<span class="w-8 text-center text-sm">1</span>
-<button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100">
-<i class="ri-add-line"></i>
-</button>
-</div>
-</div>
-</div>
-</div>
-<div id="cartFooter" class="p-4 border-t border-gray-200 hidden">
-<div class="mb-4">
-<div class="flex justify-between mb-2">
-<span class="text-sm text-gray-600">Subtotal</span>
-<span class="text-sm font-medium" id="subtotalAmount">₹144</span>
-</div>
-<div class="flex justify-between mb-2">
-<span class="text-sm text-gray-600">Delivery Fee</span>
-<span class="text-sm font-medium">₹20</span>
-</div>
-<div class="mb-4 border-t border-gray-100 pt-2">
-<div class="flex items-center mb-2">
-<input type="text" id="couponInput" placeholder="Enter coupon code" class="flex-1 py-2 px-3 border border-gray-300 rounded-l-button text-sm focus:outline-none focus:border-primary">
-<button id="applyCouponBtn" class="bg-primary text-white px-4 py-2 rounded-r-button text-sm font-medium whitespace-nowrap">Apply</button>
-</div>
-<div id="couponMessage" class="text-sm hidden"></div>
-</div>
-<div class="flex justify-between mb-2">
-<span class="text-sm text-gray-600">Discount</span>
-<span class="text-sm font-medium text-green-500" id="discountAmount">-₹0</span>
-</div>
-<div class="flex justify-between font-medium">
-<span>Total</span>
-<span id="totalAmount">₹164</span>
-</div>
-</div>
-<button class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap">Proceed to Checkout</button>
-</div>
-</div>
-</div>
-<!-- Address Modal -->
-<div id="addressModal" class="fixed inset-0 z-50 hidden">
-<div class="absolute inset-0 bg-black/50" id="addressOverlay"></div>
-<div class="auth-modal absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[90vh] overflow-y-auto">
-<div class="p-6">
-<div class="flex justify-between items-center mb-6">
-<h2 class="text-xl font-bold">Add Delivery Address</h2>
-<button id="closeAddressBtn" class="w-8 h-8 flex items-center justify-center text-gray-500 rounded-full hover:bg-gray-100">
-<i class="ri-close-line ri-lg"></i>
-</button>
-</div>
-<div class="space-y-4 mb-6">
-<div>
-<label for="addressType" class="block text-sm font-medium text-gray-700 mb-2">Address Type</label>
-<div class="flex space-x-3">
-<label class="flex items-center">
-<input type="radio" name="addressType" value="home" class="hidden" checked>
-<div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center mr-2 checked:border-primary checked:bg-primary">
-<div class="w-2.5 h-2.5 bg-white rounded-full hidden"></div>
-</div>
-<span class="text-sm">Home</span>
-</label>
-<label class="flex items-center">
-<input type="radio" name="addressType" value="work" class="hidden">
-<div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center mr-2">
-<div class="w-2.5 h-2.5 bg-white rounded-full hidden"></div>
-</div>
-<span class="text-sm">Work</span>
-</label>
-<label class="flex items-center">
-<input type="radio" name="addressType" value="other" class="hidden">
-<div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center mr-2">
-<div class="w-2.5 h-2.5 bg-white rounded-full hidden"></div>
-</div>
-<span class="text-sm">Other</span>
-</label>
-</div>
-</div>
-<div>
-<label for="completeAddress" class="block text-sm font-medium text-gray-700 mb-2">Complete Address</label>
-<textarea id="completeAddress" rows="3" placeholder="House/Flat No., Building, Street, Area" class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"></textarea>
-</div>
-<div class="grid grid-cols-2 gap-4">
-<div>
-<label for="landmark" class="block text-sm font-medium text-gray-700 mb-2">Landmark (Optional)</label>
-<input type="text" id="landmark" placeholder="Nearby landmark" class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
-</div>
-<div>
-<label for="pincode" class="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
-<input type="number" id="pincode" placeholder="6-digit pincode" class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
-</div>
-</div>
-</div>
-<button id="saveAddressBtn" class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap">Save Address</button>
-</div>
-</div>
-</div>
-<!-- Order Success Modal -->
-<div id="orderSuccessModal" class="fixed inset-0 z-50 hidden">
-<div class="absolute inset-0 bg-black/50"></div>
-<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-full max-w-md">
-<div class="flex flex-col items-center text-center">
-<div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
-<div class="w-10 h-10 flex items-center justify-center text-green-500">
-<i class="ri-check-line ri-2x"></i>
-</div>
-</div>
-<h3 class="text-xl font-bold mb-2">Order Placed Successfully!</h3>
-<p class="text-sm text-gray-600 mb-6">Your order #VB12345 has been placed successfully. It will be delivered in 10 minutes.</p>
-<div class="flex space-x-3">
-<button id="trackOrderBtn" class="bg-primary text-white px-4 py-2 rounded-button font-medium !rounded-button whitespace-nowrap">Track Order</button>
-<button id="continueShoppingBtn" class="bg-gray-100 text-gray-800 px-4 py-2 rounded-button font-medium !rounded-button whitespace-nowrap">Continue Shopping</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Scripts -->
-<script id="authModalScript">
-document.addEventListener('DOMContentLoaded', function() {
-const loginBtn = document.getElementById('loginBtn');
-const authModal = document.getElementById('authModal');
-const authOverlay = document.getElementById('authOverlay');
-const closeAuthBtn = document.getElementById('closeAuthBtn');
-const continueBtn = document.getElementById('continueBtn');
-const phoneForm = document.getElementById('phoneForm');
-const otpForm = document.getElementById('otpForm');
-const verifyBtn = document.getElementById('verifyBtn');
-function openAuthModal() {
-authModal.classList.remove('hidden');
-setTimeout(() => {
-document.querySelector('.auth-modal').classList.add('show');
-}, 10);
-}
-function closeAuthModal() {
-document.querySelector('.auth-modal').classList.remove('show');
-setTimeout(() => {
-authModal.classList.add('hidden');
-// Reset form
-phoneForm.classList.remove('hidden');
-otpForm.classList.add('hidden');
-}, 300);
-}
-loginBtn.addEventListener('click', openAuthModal);
-closeAuthBtn.addEventListener('click', closeAuthModal);
-authOverlay.addEventListener('click', closeAuthModal);
-continueBtn.addEventListener('click', function() {
-phoneForm.classList.add('hidden');
-otpForm.classList.remove('hidden');
-otpForm.classList.add('fade-in');
-});
-// Auto-focus next OTP input
-const otpInputs = document.querySelectorAll('#otpForm input');
-otpInputs.forEach((input, index) => {
-input.addEventListener('input', function() {
-if (this.value.length === 1 && index < otpInputs.length - 1) {
-otpInputs[index + 1].focus();
-}
-});
-input.addEventListener('keydown', function(e) {
-if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
-otpInputs[index - 1].focus();
-}
-});
-});
-verifyBtn.addEventListener('click', closeAuthModal);
-});
-</script>
-<script id="cartScript">
-document.addEventListener('DOMContentLoaded', function() {
-const cartBtn = document.getElementById('cartBtn');
-const cartSidebar = document.getElementById('cartSidebar');
-const closeCartBtn = document.getElementById('closeCartBtn');
-const emptyCart = document.getElementById('emptyCart');
-const cartItems = document.getElementById('cartItems');
-const cartFooter = document.getElementById('cartFooter');
-const startShoppingBtn = document.getElementById('startShoppingBtn');
-function openCart() {
-cartSidebar.classList.add('translate-x-0');
-cartSidebar.classList.remove('translate-x-full');
-// For demo purposes, show cart with items
-setTimeout(() => {
-emptyCart.classList.add('hidden');
-cartItems.classList.remove('hidden');
-cartFooter.classList.remove('hidden');
-}, 1000);
-}
-function closeCart() {
-cartSidebar.classList.remove('translate-x-0');
-cartSidebar.classList.add('translate-x-full');
-// Reset to empty cart for demo
-setTimeout(() => {
-emptyCart.classList.remove('hidden');
-cartItems.classList.add('hidden');
-cartFooter.classList.add('hidden');
-}, 300);
-}
-cartBtn.addEventListener('click', openCart);
-closeCartBtn.addEventListener('click', closeCart);
-startShoppingBtn.addEventListener('click', closeCart);
-});
-</script>
-<script id="addressScript">
-document.addEventListener('DOMContentLoaded', function() {
-const addressModal = document.getElementById('addressModal');
-const addressOverlay = document.getElementById('addressOverlay');
-const closeAddressBtn = document.getElementById('closeAddressBtn');
-const saveAddressBtn = document.getElementById('saveAddressBtn');
-const orderSuccessModal = document.getElementById('orderSuccessModal');
-const trackOrderBtn = document.getElementById('trackOrderBtn');
-const continueShoppingBtn = document.getElementById('continueShoppingBtn');
-// Custom radio buttons
-const radioButtons = document.querySelectorAll('input[name="addressType"]');
-radioButtons.forEach(radio => {
-radio.addEventListener('change', function() {
-// Reset all
-document.querySelectorAll('input[name="addressType"] + div div').forEach(dot => {
-dot.classList.add('hidden');
-});
-document.querySelectorAll('input[name="addressType"] + div').forEach(border => {
-border.classList.remove('border-primary', 'bg-primary');
-});
-// Set selected
-if (this.checked) {
-const dot = this.nextElementSibling.querySelector('div');
-dot.classList.remove('hidden');
-this.nextElementSibling.classList.add('border-primary', 'bg-primary');
-}
-});
-});
-// Initial state for the first radio button
-if (radioButtons[0].checked) {
-const dot = radioButtons[0].nextElementSibling.querySelector('div');
-dot.classList.remove('hidden');
-radioButtons[0].nextElementSibling.classList.add('border-primary', 'bg-primary');
-}
-function openAddressModal() {
-addressModal.classList.remove('hidden');
-setTimeout(() => {
-document.querySelector('#addressModal .auth-modal').classList.add('show');
-}, 10);
-}
-function closeAddressModal() {
-document.querySelector('#addressModal .auth-modal').classList.remove('show');
-setTimeout(() => {
-addressModal.classList.add('hidden');
-}, 300);
-}
-function showOrderSuccess() {
-orderSuccessModal.classList.remove('hidden');
-}
-function hideOrderSuccess() {
-orderSuccessModal.classList.add('hidden');
-}
-// For demo purposes, connect cart checkout to address modal
-document.querySelector('#cartFooter button').addEventListener('click', function() {
-document.getElementById('cartSidebar').classList.add('translate-x-full');
-document.getElementById('cartSidebar').classList.remove('translate-x-0');
-setTimeout(() => {
-openAddressModal();
-}, 300);
-});
-closeAddressBtn.addEventListener('click', closeAddressModal);
-addressOverlay.addEventListener('click', closeAddressModal);
-saveAddressBtn.addEventListener('click', function() {
-closeAddressModal();
-setTimeout(() => {
-showOrderSuccess();
-}, 300);
-});
-trackOrderBtn.addEventListener('click', hideOrderSuccess);
-continueShoppingBtn.addEventListener('click', hideOrderSuccess);
-});
-</script>
-<script id="productScript">
-document.addEventListener('DOMContentLoaded', function() {
-// Add to cart functionality
-const addButtons = document.querySelectorAll('button:not(#loginBtn):not(#cartBtn):not(#closeCartBtn):not(#startShoppingBtn):not(#continueBtn):not(#verifyBtn):not(#closeAuthBtn):not(#closeAddressBtn):not(#saveAddressBtn):not(#trackOrderBtn):not(#continueShoppingBtn)');
-addButtons.forEach(button => {
-if (button.textContent.trim() === 'Add') {
-button.addEventListener('click', function() {
-// Update cart count
-const cartCountElements = document.querySelectorAll('#cartBtn .absolute, nav .absolute');
-cartCountElements.forEach(element => {
-const currentCount = parseInt(element.textContent);
-element.textContent = currentCount + 1;
-});
-// Show quick feedback
-const originalText = this.textContent;
-this.textContent = 'Added';
-this.classList.add('bg-green-500');
-setTimeout(() => {
-this.textContent = originalText;
-this.classList.remove('bg-green-500');
-}, 1000);
-});
-}
-});
-});
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VaibhavStore - Grocery Delivery in 10 Minutes</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#2563eb", secondary: "#93c5fd" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+      body {
+      font-family: 'Inter', sans-serif;
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+      }
+      .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      }
+      input[type="number"] {
+      -moz-appearance: textfield;
+      }
+      .custom-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.2s;
+      position: relative;
+      }
+      .custom-checkbox:checked {
+      background-color: #2563eb;
+      border-color: #2563eb;
+      }
+      .custom-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 5px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      }
+      .custom-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      }
+      .custom-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      }
+      .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #e5e7eb;
+      transition: .4s;
+      border-radius: 34px;
+      }
+      .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      }
+      input:checked + .switch-slider {
+      background-color: #2563eb;
+      }
+      input:checked + .switch-slider:before {
+      transform: translateX(20px);
+      }
+      .auth-modal {
+      transform: translateY(100%);
+      transition: transform 0.3s ease-in-out;
+      }
+      .auth-modal.show {
+      transform: translateY(0);
+      }
+      .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+      }
+      @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+      <div class="container mx-auto px-4 py-3">
+        <div class="flex items-center justify-between">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3">
+            <a href="#" class="text-2xl font-['Pacifico'] text-primary"
+              >VaibhavStore</a
+            >
+          </div>
+          <!-- Location Selector -->
+          <div class="hidden md:flex items-center space-x-2 cursor-pointer">
+            <div class="w-8 h-8 flex items-center justify-center text-primary">
+              <i class="ri-map-pin-line ri-lg"></i>
+            </div>
+            <div>
+              <div class="text-xs text-gray-500">Delivery to</div>
+              <div class="text-sm font-medium">Ramnagar, Ghaziabad</div>
+            </div>
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-arrow-down-s-line"></i>
+            </div>
+          </div>
+          <!-- Search Bar -->
+          <div class="hidden md:flex flex-1 max-w-md mx-4">
+            <div class="relative w-full">
+              <input
+                type="text"
+                placeholder="Search for items..."
+                class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+              />
+              <div
+                class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
+              >
+                <i class="ri-search-line"></i>
+              </div>
+            </div>
+          </div>
+          <!-- Action Buttons -->
+          <div class="flex items-center space-x-4">
+            <button
+              id="loginBtn"
+              class="hidden md:flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-button hover:bg-gray-100"
+            >
+              <div class="w-5 h-5 flex items-center justify-center">
+                <i class="ri-user-line"></i>
+              </div>
+              <span>Login</span>
+            </button>
+            <button
+              id="cartBtn"
+              class="relative flex items-center space-x-1 text-sm font-medium px-3 py-2 rounded-button hover:bg-gray-100"
+            >
+              <div class="w-5 h-5 flex items-center justify-center">
+                <i class="ri-shopping-cart-line"></i>
+              </div>
+              <span class="hidden md:inline">Cart</span>
+              <div
+                class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs"
+              >
+                0
+              </div>
+            </button>
+          </div>
+        </div>
+        <!-- Mobile Search Bar -->
+        <div class="md:hidden mt-3">
+          <div class="relative w-full">
+            <input
+              type="text"
+              placeholder="Search for items..."
+              class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+            />
+            <div
+              class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
+            >
+              <i class="ri-search-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- Main Content -->
+    <main>
+      <!-- Hero Banner -->
+      <section class="bg-white py-4">
+        <div class="container mx-auto px-4">
+          <div class="relative rounded-lg overflow-hidden h-40 md:h-64">
+            <img
+              src="https://readdy.ai/api/search-image?query=grocery%20delivery%20app%20banner%20with%20fresh%20vegetables%2C%20fruits%2C%20and%20daily%20essentials%20arranged%20beautifully%20with%20a%20blue%20color%20theme%2C%20professional%20e-commerce%20banner%2C%20high-quality%20product%20photography&width=1200&height=400&seq=banner1&orientation=landscape"
+              alt="VaibhavStore Banner"
+              class="w-full h-full object-cover"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center"
+            >
+              <div class="ml-6 md:ml-12 max-w-md">
+                <h1 class="text-white text-2xl md:text-4xl font-bold mb-2">
+                  Groceries Delivered in 10 Minutes
+                </h1>
+                <p class="text-white text-sm md:text-base mb-4">
+                  Order now and get your essentials delivered to your doorstep
+                </p>
+                <button
+                  id="orderNowBtn"
+                  class="bg-white text-primary px-4 py-2 rounded-button font-medium text-sm !rounded-button whitespace-nowrap"
+                >
+                  Order Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Categories -->
+      <section class="py-6 bg-white">
+        <div class="container mx-auto px-4">
+          <h2 class="text-xl font-bold mb-4">Shop by Category</h2>
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-4">
+            <a href="#" class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-2"
+              >
+                <img
+                  src="https://readdy.ai/api/search-image?query=fresh%20fruits%20assortment%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat1&orientation=squarish"
+                  alt="Fruits"
+                  class="w-12 h-12 object-contain"
+                />
+              </div>
+              <span class="text-xs text-center">Fruits</span>
+            </a>
+            <a href="#" class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-2"
+              >
+                <img
+                  src="https://readdy.ai/api/search-image?query=fresh%20vegetables%20assortment%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat2&orientation=squarish"
+                  alt="Vegetables"
+                  class="w-12 h-12 object-contain"
+                />
+              </div>
+              <span class="text-xs text-center">Vegetables</span>
+            </a>
+            <a href="#" class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mb-2"
+              >
+                <img
+                  src="https://readdy.ai/api/search-image?query=dairy%20products%20milk%20cheese%20yogurt%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat3&orientation=squarish"
+                  alt="Dairy"
+                  class="w-12 h-12 object-contain"
+                />
+              </div>
+              <span class="text-xs text-center">Dairy</span>
+            </a>
+            <a href="#" class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-2"
+              >
+                <img
+                  src="https://readdy.ai/api/search-image?query=bakery%20products%20bread%20pastries%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat4&orientation=squarish"
+                  alt="Bakery"
+                  class="w-12 h-12 object-contain"
+                />
+              </div>
+              <span class="text-xs text-center">Bakery</span>
+            </a>
+            <a href="#" class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-2"
+              >
+                <img
+                  src="https://readdy.ai/api/search-image?query=snacks%20chips%20cookies%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat5&orientation=squarish"
+                  alt="Snacks"
+                  class="w-12 h-12 object-contain"
+                />
+              </div>
+              <span class="text-xs text-center">Snacks</span>
+            </a>
+            <a href="#" class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-2"
+              >
+                <img
+                  src="https://readdy.ai/api/search-image?query=beverages%20drinks%20juices%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat6&orientation=squarish"
+                  alt="Beverages"
+                  class="w-12 h-12 object-contain"
+                />
+              </div>
+              <span class="text-xs text-center">Beverages</span>
+            </a>
+            <a href="#" class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center mb-2"
+              >
+                <img
+                  src="https://readdy.ai/api/search-image?query=household%20cleaning%20products%20on%20white%20background%2C%20minimal%20style&width=100&height=100&seq=cat7&orientation=squarish"
+                  alt="Household"
+                  class="w-12 h-12 object-contain"
+                />
+              </div>
+              <span class="text-xs text-center">Household</span>
+            </a>
+            <a href="#" class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mb-2"
+              >
+                <div class="w-6 h-6 flex items-center justify-center">
+                  <i class="ri-apps-line text-indigo-500"></i>
+                </div>
+              </div>
+              <span class="text-xs text-center">More</span>
+            </a>
+          </div>
+        </div>
+      </section>
+      <!-- Trending Products -->
+      <section class="py-6 bg-gray-50">
+        <div class="container mx-auto px-4">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Trending Products</h2>
+            <a href="#" class="text-primary text-sm font-medium">View All</a>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <!-- Product Card 1 -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=fresh%20organic%20apples%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod1&orientation=squarish"
+                  alt="Fresh Apples"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded"
+                >
+                  20% OFF
+                </div>
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Fresh Organic Apples</h3>
+                <div class="text-xs text-gray-500 mb-2">500g</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹99</span>
+                    <span class="text-xs text-gray-500 line-through ml-1"
+                      >₹120</span
+                    >
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Product Card 2 -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=whole%20wheat%20bread%20loaf%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod2&orientation=squarish"
+                  alt="Whole Wheat Bread"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Whole Wheat Bread</h3>
+                <div class="text-xs text-gray-500 mb-2">400g</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹45</span>
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Product Card 3 -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=full%20cream%20milk%20carton%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod3&orientation=squarish"
+                  alt="Full Cream Milk"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Full Cream Milk</h3>
+                <div class="text-xs text-gray-500 mb-2">1L</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹65</span>
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Product Card 4 -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=fresh%20tomatoes%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod4&orientation=squarish"
+                  alt="Fresh Tomatoes"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded"
+                >
+                  10% OFF
+                </div>
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Fresh Tomatoes</h3>
+                <div class="text-xs text-gray-500 mb-2">500g</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹40</span>
+                    <span class="text-xs text-gray-500 line-through ml-1"
+                      >₹45</span
+                    >
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Product Card 5 -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=potato%20chips%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=prod5&orientation=squarish"
+                  alt="Potato Chips"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Classic Potato Chips</h3>
+                <div class="text-xs text-gray-500 mb-2">150g</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹30</span>
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Daily Essentials -->
+      <section class="py-6 bg-white">
+        <div class="container mx-auto px-4">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Daily Essentials</h2>
+            <a href="#" class="text-primary text-sm font-medium">View All</a>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <!-- Product Card 1 -->
+            <div
+              class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100"
+            >
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=cooking%20oil%20bottle%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess1&orientation=squarish"
+                  alt="Cooking Oil"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Refined Cooking Oil</h3>
+                <div class="text-xs text-gray-500 mb-2">1L</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹150</span>
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Product Card 2 -->
+            <div
+              class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100"
+            >
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=basmati%20rice%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess2&orientation=squarish"
+                  alt="Basmati Rice"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Premium Basmati Rice</h3>
+                <div class="text-xs text-gray-500 mb-2">1kg</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹120</span>
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Product Card 3 -->
+            <div
+              class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100"
+            >
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=sugar%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess3&orientation=squarish"
+                  alt="Sugar"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Refined Sugar</h3>
+                <div class="text-xs text-gray-500 mb-2">1kg</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹55</span>
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Product Card 4 -->
+            <div
+              class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100"
+            >
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=wheat%20flour%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess4&orientation=squarish"
+                  alt="Wheat Flour"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Whole Wheat Flour</h3>
+                <div class="text-xs text-gray-500 mb-2">5kg</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹220</span>
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Product Card 5 -->
+            <div
+              class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100"
+            >
+              <div class="relative h-36">
+                <img
+                  src="https://readdy.ai/api/search-image?query=salt%20packet%20on%20white%20background%2C%20high-quality%20product%20photography&width=300&height=300&seq=ess5&orientation=squarish"
+                  alt="Salt"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-medium mb-1">Iodized Salt</h3>
+                <div class="text-xs text-gray-500 mb-2">1kg</div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-sm font-bold">₹20</span>
+                  </div>
+                  <button
+                    class="bg-primary text-white text-xs px-3 py-1 rounded-button !rounded-button whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Special Offers -->
+      <section class="py-6 bg-gray-50">
+        <div class="container mx-auto px-4">
+          <h2 class="text-xl font-bold mb-4">Special Offers</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div class="relative h-40">
+                <img
+                  src="https://readdy.ai/api/search-image?query=fresh%20fruits%20and%20vegetables%20arrangement%20with%20discount%20tag%2C%20promotional%20banner%20with%20blue%20theme&width=400&height=200&seq=offer1&orientation=landscape"
+                  alt="Fresh Produce Sale"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  class="absolute inset-0 bg-gradient-to-r from-primary/70 to-transparent flex items-center"
+                >
+                  <div class="p-4 text-white">
+                    <h3 class="text-lg font-bold mb-1">Fresh Produce Sale</h3>
+                    <p class="text-sm mb-2">
+                      Up to 30% off on fruits & vegetables
+                    </p>
+                    <button
+                      class="bg-white text-primary text-xs px-3 py-1 rounded-button font-medium !rounded-button whitespace-nowrap"
+                    >
+                      Shop Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div class="relative h-40">
+                <img
+                  src="https://readdy.ai/api/search-image?query=dairy%20products%20arrangement%20with%20discount%20tag%2C%20promotional%20banner%20with%20blue%20theme&width=400&height=200&seq=offer2&orientation=landscape"
+                  alt="Dairy Delights"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  class="absolute inset-0 bg-gradient-to-r from-primary/70 to-transparent flex items-center"
+                >
+                  <div class="p-4 text-white">
+                    <h3 class="text-lg font-bold mb-1">Dairy Delights</h3>
+                    <p class="text-sm mb-2">
+                      Buy 2 Get 1 Free on all dairy products
+                    </p>
+                    <button
+                      class="bg-white text-primary text-xs px-3 py-1 rounded-button font-medium !rounded-button whitespace-nowrap"
+                    >
+                      Shop Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div class="relative h-40">
+                <img
+                  src="https://readdy.ai/api/search-image?query=snacks%20and%20beverages%20arrangement%20with%20discount%20tag%2C%20promotional%20banner%20with%20blue%20theme&width=400&height=200&seq=offer3&orientation=landscape"
+                  alt="Snack Time Savings"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  class="absolute inset-0 bg-gradient-to-r from-primary/70 to-transparent flex items-center"
+                >
+                  <div class="p-4 text-white">
+                    <h3 class="text-lg font-bold mb-1">Snack Time Savings</h3>
+                    <p class="text-sm mb-2">
+                      Flat 20% off on snacks & beverages
+                    </p>
+                    <button
+                      class="bg-white text-primary text-xs px-3 py-1 rounded-button font-medium !rounded-button whitespace-nowrap"
+                    >
+                      Shop Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- App Download -->
+      <section class="py-8 bg-primary">
+        <div class="container mx-auto px-4">
+          <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="text-center md:text-left mb-6 md:mb-0">
+              <h2 class="text-2xl font-bold text-white mb-2">
+                Download Our App
+              </h2>
+              <p class="text-white/80 mb-4">
+                Get groceries delivered in just 10 minutes!
+              </p>
+              <div
+                class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start"
+              >
+                <button
+                  class="bg-black text-white px-4 py-2 rounded-button flex items-center justify-center space-x-2 !rounded-button whitespace-nowrap"
+                >
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-apple-fill ri-lg"></i>
+                  </div>
+                  <div class="text-left">
+                    <div class="text-xs">Download on the</div>
+                    <div class="text-sm font-medium">App Store</div>
+                  </div>
+                </button>
+                <button
+                  class="bg-black text-white px-4 py-2 rounded-button flex items-center justify-center space-x-2 !rounded-button whitespace-nowrap"
+                >
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-google-play-fill ri-lg"></i>
+                  </div>
+                  <div class="text-left">
+                    <div class="text-xs">Get it on</div>
+                    <div class="text-sm font-medium">Google Play</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+            <div class="w-64 md:w-80">
+              <img
+                src="https://readdy.ai/api/search-image?query=smartphone%20showing%20grocery%20delivery%20app%20interface%20with%20blue%20theme%2C%20transparent%20background%2C%20professional%20app%20mockup&width=400&height=400&seq=app&orientation=portrait"
+                alt="VaibhavStore App"
+                class="w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Features -->
+      <section class="py-8 bg-white">
+        <div class="container mx-auto px-4">
+          <h2 class="text-xl font-bold mb-6 text-center">
+            Why Choose VaibhavStore?
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3"
+              >
+                <div
+                  class="w-8 h-8 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-time-line ri-xl"></i>
+                </div>
+              </div>
+              <h3 class="text-sm font-medium mb-2">10-Minute Delivery</h3>
+              <p class="text-xs text-gray-500">
+                Get your groceries delivered in just 10 minutes
+              </p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3"
+              >
+                <div
+                  class="w-8 h-8 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-leaf-line ri-xl"></i>
+                </div>
+              </div>
+              <h3 class="text-sm font-medium mb-2">Fresh Products</h3>
+              <p class="text-xs text-gray-500">
+                We source the freshest products daily
+              </p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3"
+              >
+                <div
+                  class="w-8 h-8 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-secure-payment-line ri-xl"></i>
+                </div>
+              </div>
+              <h3 class="text-sm font-medium mb-2">Secure Payments</h3>
+              <p class="text-xs text-gray-500">
+                Multiple secure payment options available
+              </p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3"
+              >
+                <div
+                  class="w-8 h-8 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-customer-service-2-line ri-xl"></i>
+                </div>
+              </div>
+              <h3 class="text-sm font-medium mb-2">24/7 Support</h3>
+              <p class="text-xs text-gray-500">
+                Our customer support team is always available
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white pt-10 pb-6">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <h3 class="text-lg font-medium mb-4">VaibhavStore</h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Careers</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Blog</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Press</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium mb-4">Help</h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Payments</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Shipping</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Cancellation & Returns</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >FAQ</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium mb-4">Policy</h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Return Policy</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Terms of Use</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Security</a
+                >
+              </li>
+              <li>
+                <a href="#" class="text-sm text-gray-300 hover:text-white"
+                  >Privacy</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium mb-4">Contact Us</h3>
+            <ul class="space-y-2">
+              <li class="flex items-start space-x-2">
+                <div
+                  class="w-5 h-5 flex items-center justify-center text-gray-300 mt-0.5"
+                >
+                  <i class="ri-map-pin-line"></i>
+                </div>
+                <span class="text-sm text-gray-300"
+                  >Ramnagar, Ghaziabad, Uttar Pradesh, India</span
+                >
+              </li>
+              <li class="flex items-center space-x-2">
+                <div
+                  class="w-5 h-5 flex items-center justify-center text-gray-300"
+                >
+                  <i class="ri-phone-line"></i>
+                </div>
+                <span class="text-sm text-gray-300">+91 93546 52764</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <div
+                  class="w-5 h-5 flex items-center justify-center text-gray-300"
+                >
+                  <i class="ri-mail-line"></i>
+                </div>
+                <span class="text-sm text-gray-300"
+                  >support@vaibhavstore.com</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-gray-700 pt-6">
+          <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+              <p class="text-sm text-gray-400">
+                © 2025 VaibhavStore. All rights reserved.
+              </p>
+              <p class="text-sm text-gray-400 mt-1">
+                Website & App managed by
+                <a
+                  href="https://preview--yakeen-digital-genesis.lovable.app/"
+                  class="text-primary hover:underline"
+                  target="_blank"
+                  >Yakeen Design Agency</a
+                >
+              </p>
+            </div>
+            <div class="flex space-x-4">
+              <div
+                class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center"
+              >
+                <div
+                  class="w-4 h-4 flex items-center justify-center text-white"
+                >
+                  <i class="ri-facebook-fill"></i>
+                </div>
+              </div>
+              <div
+                class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center"
+              >
+                <div
+                  class="w-4 h-4 flex items-center justify-center text-white"
+                >
+                  <i class="ri-twitter-x-fill"></i>
+                </div>
+              </div>
+              <div
+                class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center"
+              >
+                <div
+                  class="w-4 h-4 flex items-center justify-center text-white"
+                >
+                  <i class="ri-instagram-line"></i>
+                </div>
+              </div>
+              <div
+                class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center"
+              >
+                <div
+                  class="w-4 h-4 flex items-center justify-center text-white"
+                >
+                  <i class="ri-youtube-fill"></i>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-3">
+              <div class="w-10 h-6 flex items-center justify-center">
+                <i class="ri-visa-fill ri-lg text-gray-300"></i>
+              </div>
+              <div class="w-10 h-6 flex items-center justify-center">
+                <i class="ri-mastercard-fill ri-lg text-gray-300"></i>
+              </div>
+              <div class="w-10 h-6 flex items-center justify-center">
+                <i class="ri-paypal-fill ri-lg text-gray-300"></i>
+              </div>
+              <div class="w-10 h-6 flex items-center justify-center">
+                <i class="ri-amazon-pay-fill ri-lg text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Mobile Navigation -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50"
+    >
+      <div class="flex justify-around">
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-primary">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-home-5-fill"></i>
+          </div>
+          <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-apps-line"></i>
+          </div>
+          <span class="text-xs mt-1">Categories</span>
+        </a>
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-search-line"></i>
+          </div>
+          <span class="text-xs mt-1">Search</span>
+        </a>
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-gray-500">
+          <div class="relative w-6 h-6 flex items-center justify-center">
+            <i class="ri-shopping-cart-line"></i>
+            <div
+              class="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center text-xs"
+            >
+              0
+            </div>
+          </div>
+          <span class="text-xs mt-1">Cart</span>
+        </a>
+        <a href="#" class="flex flex-col items-center py-2 px-3 text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-user-line"></i>
+          </div>
+          <span class="text-xs mt-1">Account</span>
+        </a>
+      </div>
+    </nav>
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black/50" id="authOverlay"></div>
+      <div
+        class="auth-modal absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[90vh] overflow-y-auto"
+      >
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">Login or Signup</h2>
+            <button
+              id="closeAuthBtn"
+              class="w-8 h-8 flex items-center justify-center text-gray-500 rounded-full hover:bg-gray-100"
+            >
+              <i class="ri-close-line ri-lg"></i>
+            </button>
+          </div>
+          <div class="mb-6">
+            <div class="flex justify-center space-x-4 mb-6">
+              <button
+                id="loginTabBtn"
+                class="text-sm font-medium px-4 py-2 rounded-full bg-primary text-white"
+              >
+                Login
+              </button>
+              <button
+                id="signupTabBtn"
+                class="text-sm font-medium px-4 py-2 rounded-full text-gray-600"
+              >
+                Sign Up
+              </button>
+            </div>
+            <div id="loginForm">
+              <div class="mb-4">
+                <label
+                  for="loginEmail"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  id="loginEmail"
+                  placeholder="Enter your email"
+                  class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div class="mb-4">
+                <label
+                  for="loginPassword"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Password</label
+                >
+                <div class="relative">
+                  <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                  <button
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <i class="ri-eye-line"></i>
+                  </button>
+                </div>
+                <div class="flex justify-end mt-1">
+                  <button class="text-sm text-primary hover:underline">
+                    Forgot Password?
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="signupForm" class="hidden">
+              <div class="mb-4">
+                <label
+                  for="signupName"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Full Name</label
+                >
+                <input
+                  type="text"
+                  id="signupName"
+                  placeholder="Enter your full name"
+                  class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div class="mb-4">
+                <label
+                  for="signupEmail"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  id="signupEmail"
+                  placeholder="Enter your email"
+                  class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div class="mb-4">
+                <label
+                  for="signupPhone"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Phone Number</label
+                >
+                <div
+                  class="flex rounded-button border border-gray-300 overflow-hidden"
+                >
+                  <div
+                    class="flex items-center px-3 bg-gray-50 border-r border-gray-300"
+                  >
+                    <span class="text-sm font-medium">+91</span>
+                  </div>
+                  <input
+                    type="number"
+                    id="signupPhone"
+                    placeholder="Enter phone number"
+                    class="flex-1 py-2 px-3 outline-none text-sm border-none"
+                  />
+                </div>
+              </div>
+              <div class="mb-4">
+                <label
+                  for="signupPassword"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Password</label
+                >
+                <div class="relative">
+                  <input
+                    type="password"
+                    id="signupPassword"
+                    placeholder="Create password"
+                    class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                  <button
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <i class="ri-eye-line"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="mb-6">
+                <label class="flex items-center">
+                  <input type="checkbox" class="custom-checkbox" />
+                  <span class="text-sm text-gray-600 ml-2"
+                    >I agree to the
+                    <a href="#" class="text-primary hover:underline"
+                      >Terms & Conditions</a
+                    >
+                    and
+                    <a href="#" class="text-primary hover:underline"
+                      >Privacy Policy</a
+                    ></span
+                  >
+                </label>
+              </div>
+            </div>
+          </div>
+          <button
+            id="continueBtn"
+            class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap"
+          >
+            Login
+          </button>
+          <div class="flex items-center my-4">
+            <div class="flex-1 border-t border-gray-200"></div>
+            <span class="px-4 text-sm text-gray-500">or continue with</span>
+            <div class="flex-1 border-t border-gray-200"></div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <button
+              class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-button hover:bg-gray-50"
+            >
+              <i class="ri-google-fill text-[#DB4437]"></i>
+            </button>
+            <button
+              class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-button hover:bg-gray-50"
+            >
+              <i class="ri-facebook-fill text-[#4267B2]"></i>
+            </button>
+            <button
+              class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-button hover:bg-gray-50"
+            >
+              <i class="ri-apple-fill"></i>
+            </button>
+          </div>
+          <div id="otpForm" class="hidden mt-6">
+            <div class="mb-6">
+              <label
+                for="otp"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Enter the OTP sent to your phone</label
+              >
+              <div class="flex space-x-2">
+                <input
+                  type="number"
+                  class="w-12 h-12 rounded-button border border-gray-300 text-center text-lg font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  maxlength="1"
+                />
+                <input
+                  type="number"
+                  class="w-12 h-12 rounded-button border border-gray-300 text-center text-lg font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  maxlength="1"
+                />
+                <input
+                  type="number"
+                  class="w-12 h-12 rounded-button border border-gray-300 text-center text-lg font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  maxlength="1"
+                />
+                <input
+                  type="number"
+                  class="w-12 h-12 rounded-button border border-gray-300 text-center text-lg font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  maxlength="1"
+                />
+              </div>
+            </div>
+            <button
+              id="verifyBtn"
+              class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap"
+            >
+              Verify OTP
+            </button>
+            <div class="mt-4 text-center">
+              <span class="text-sm text-gray-600">Didn't receive OTP?</span>
+              <button class="text-sm text-primary font-medium ml-1">
+                Resend
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Cart Sidebar -->
+    <div
+      id="cartSidebar"
+      class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out"
+    >
+      <div class="flex flex-col h-full">
+        <div
+          class="p-4 border-b border-gray-200 flex justify-between items-center"
+        >
+          <h2 class="text-lg font-bold">Your Cart</h2>
+          <button
+            id="closeCartBtn"
+            class="w-8 h-8 flex items-center justify-center text-gray-500 rounded-full hover:bg-gray-100"
+          >
+            <i class="ri-close-line ri-lg"></i>
+          </button>
+        </div>
+        <div
+          id="emptyCart"
+          class="flex-1 flex flex-col items-center justify-center p-6"
+        >
+          <div
+            class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4"
+          >
+            <div
+              class="w-12 h-12 flex items-center justify-center text-gray-400"
+            >
+              <i class="ri-shopping-cart-line ri-2x"></i>
+            </div>
+          </div>
+          <h3 class="text-lg font-medium mb-2">Your cart is empty</h3>
+          <p class="text-sm text-gray-500 text-center mb-6">
+            Add items to your cart to proceed with your order
+          </p>
+          <button
+            id="startShoppingBtn"
+            class="bg-primary text-white px-6 py-2 rounded-button font-medium !rounded-button whitespace-nowrap"
+          >
+            Start Shopping
+          </button>
+        </div>
+        <div id="cartItems" class="flex-1 overflow-y-auto p-4 hidden">
+          <!-- Cart items will be dynamically added here -->
+          <div class="border-b border-gray-100 pb-4 mb-4">
+            <div class="flex items-center">
+              <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                <img
+                  src="https://readdy.ai/api/search-image?query=fresh%20organic%20apples%20on%20white%20background%2C%20high-quality%20product%20photography&width=100&height=100&seq=cart1&orientation=squarish"
+                  alt="Fresh Organic Apples"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium">Fresh Organic Apples</h4>
+                <div class="text-xs text-gray-500">500g</div>
+                <div class="flex items-center mt-1">
+                  <span class="text-sm font-bold">₹99</span>
+                  <span class="text-xs text-gray-500 line-through ml-1"
+                    >₹120</span
+                  >
+                </div>
+              </div>
+              <div
+                class="flex items-center border border-gray-300 rounded-full overflow-hidden"
+              >
+                <button
+                  class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100"
+                >
+                  <i class="ri-subtract-line"></i>
+                </button>
+                <span class="w-8 text-center text-sm">1</span>
+                <button
+                  class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100"
+                >
+                  <i class="ri-add-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="border-b border-gray-100 pb-4 mb-4">
+            <div class="flex items-center">
+              <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                <img
+                  src="https://readdy.ai/api/search-image?query=whole%20wheat%20bread%20loaf%20on%20white%20background%2C%20high-quality%20product%20photography&width=100&height=100&seq=cart2&orientation=squarish"
+                  alt="Whole Wheat Bread"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium">Whole Wheat Bread</h4>
+                <div class="text-xs text-gray-500">400g</div>
+                <div class="flex items-center mt-1">
+                  <span class="text-sm font-bold">₹45</span>
+                </div>
+              </div>
+              <div
+                class="flex items-center border border-gray-300 rounded-full overflow-hidden"
+              >
+                <button
+                  class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100"
+                >
+                  <i class="ri-subtract-line"></i>
+                </button>
+                <span class="w-8 text-center text-sm">1</span>
+                <button
+                  class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100"
+                >
+                  <i class="ri-add-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="cartFooter" class="p-4 border-t border-gray-200 hidden">
+          <div class="mb-4">
+            <div class="flex justify-between mb-2">
+              <span class="text-sm text-gray-600">Subtotal</span>
+              <span class="text-sm font-medium" id="subtotalAmount">₹144</span>
+            </div>
+            <div class="flex justify-between mb-2">
+              <span class="text-sm text-gray-600">Delivery Fee</span>
+              <span class="text-sm font-medium">₹20</span>
+            </div>
+            <div class="mb-4 border-t border-gray-100 pt-2">
+              <div class="flex items-center mb-2">
+                <input
+                  type="text"
+                  id="couponInput"
+                  placeholder="Enter coupon code"
+                  class="flex-1 py-2 px-3 border border-gray-300 rounded-l-button text-sm focus:outline-none focus:border-primary"
+                />
+                <button
+                  id="applyCouponBtn"
+                  class="bg-primary text-white px-4 py-2 rounded-r-button text-sm font-medium whitespace-nowrap"
+                >
+                  Apply
+                </button>
+              </div>
+              <div id="couponMessage" class="text-sm hidden"></div>
+            </div>
+            <div class="flex justify-between mb-2">
+              <span class="text-sm text-gray-600">Discount</span>
+              <span
+                class="text-sm font-medium text-green-500"
+                id="discountAmount"
+                >-₹0</span
+              >
+            </div>
+            <div class="flex justify-between font-medium">
+              <span>Total</span>
+              <span id="totalAmount">₹164</span>
+            </div>
+          </div>
+          <button
+            class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap"
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Address Modal -->
+    <div id="addressModal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black/50" id="addressOverlay"></div>
+      <div
+        class="auth-modal absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[90vh] overflow-y-auto"
+      >
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">Add Delivery Address</h2>
+            <button
+              id="closeAddressBtn"
+              class="w-8 h-8 flex items-center justify-center text-gray-500 rounded-full hover:bg-gray-100"
+            >
+              <i class="ri-close-line ri-lg"></i>
+            </button>
+          </div>
+          <div class="space-y-4 mb-6">
+            <div>
+              <label
+                for="addressType"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Address Type</label
+              >
+              <div class="flex space-x-3">
+                <label class="flex items-center">
+                  <input
+                    type="radio"
+                    name="addressType"
+                    value="home"
+                    class="hidden"
+                    checked
+                  />
+                  <div
+                    class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center mr-2 checked:border-primary checked:bg-primary"
+                  >
+                    <div class="w-2.5 h-2.5 bg-white rounded-full hidden"></div>
+                  </div>
+                  <span class="text-sm">Home</span>
+                </label>
+                <label class="flex items-center">
+                  <input
+                    type="radio"
+                    name="addressType"
+                    value="work"
+                    class="hidden"
+                  />
+                  <div
+                    class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center mr-2"
+                  >
+                    <div class="w-2.5 h-2.5 bg-white rounded-full hidden"></div>
+                  </div>
+                  <span class="text-sm">Work</span>
+                </label>
+                <label class="flex items-center">
+                  <input
+                    type="radio"
+                    name="addressType"
+                    value="other"
+                    class="hidden"
+                  />
+                  <div
+                    class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center mr-2"
+                  >
+                    <div class="w-2.5 h-2.5 bg-white rounded-full hidden"></div>
+                  </div>
+                  <span class="text-sm">Other</span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <label
+                for="completeAddress"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Complete Address</label
+              >
+              <textarea
+                id="completeAddress"
+                rows="3"
+                placeholder="House/Flat No., Building, Street, Area"
+                class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              ></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="landmark"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Landmark (Optional)</label
+                >
+                <input
+                  type="text"
+                  id="landmark"
+                  placeholder="Nearby landmark"
+                  class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label
+                  for="pincode"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Pincode</label
+                >
+                <input
+                  type="number"
+                  id="pincode"
+                  placeholder="6-digit pincode"
+                  class="w-full rounded-button border border-gray-300 py-2 px-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            id="saveAddressBtn"
+            class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap"
+          >
+            Save Address
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Category Selection Modal -->
+    <div id="categoryModal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-full max-w-2xl"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold">Choose Category</h3>
+          <button
+            id="closeCategoryBtn"
+            class="w-8 h-8 flex items-center justify-center text-gray-500 rounded-full hover:bg-gray-100"
+          >
+            <i class="ri-close-line ri-lg"></i>
+          </button>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+          <a
+            href="#"
+            class="group bg-white rounded-lg p-4 border border-gray-200 hover:border-primary transition-colors"
+          >
+            <div
+              class="w-full h-32 rounded-lg bg-blue-50 flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-colors"
+            >
+              <img
+                src="https://readdy.ai/api/search-image?query=fresh%20fruits%20assortment%20on%20white%20background%2C%20minimal%20style&width=200&height=200&seq=catm1&orientation=squarish"
+                alt="Fruits"
+                class="w-24 h-24 object-contain"
+              />
+            </div>
+            <h4 class="text-sm font-medium text-center">Fruits</h4>
+          </a>
+          <a
+            href="#"
+            class="group bg-white rounded-lg p-4 border border-gray-200 hover:border-primary transition-colors"
+          >
+            <div
+              class="w-full h-32 rounded-lg bg-green-50 flex items-center justify-center mb-3 group-hover:bg-green-100 transition-colors"
+            >
+              <img
+                src="https://readdy.ai/api/search-image?query=fresh%20vegetables%20assortment%20on%20white%20background%2C%20minimal%20style&width=200&height=200&seq=catm2&orientation=squarish"
+                alt="Vegetables"
+                class="w-24 h-24 object-contain"
+              />
+            </div>
+            <h4 class="text-sm font-medium text-center">Vegetables</h4>
+          </a>
+          <a
+            href="#"
+            class="group bg-white rounded-lg p-4 border border-gray-200 hover:border-primary transition-colors"
+          >
+            <div
+              class="w-full h-32 rounded-lg bg-yellow-50 flex items-center justify-center mb-3 group-hover:bg-yellow-100 transition-colors"
+            >
+              <img
+                src="https://readdy.ai/api/search-image?query=dairy%20products%20milk%20cheese%20yogurt%20on%20white%20background%2C%20minimal%20style&width=200&height=200&seq=catm3&orientation=squarish"
+                alt="Dairy"
+                class="w-24 h-24 object-contain"
+              />
+            </div>
+            <h4 class="text-sm font-medium text-center">Dairy</h4>
+          </a>
+          <a
+            href="#"
+            class="group bg-white rounded-lg p-4 border border-gray-200 hover:border-primary transition-colors"
+          >
+            <div
+              class="w-full h-32 rounded-lg bg-red-50 flex items-center justify-center mb-3 group-hover:bg-red-100 transition-colors"
+            >
+              <img
+                src="https://readdy.ai/api/search-image?query=bakery%20products%20bread%20pastries%20on%20white%20background%2C%20minimal%20style&width=200&height=200&seq=catm4&orientation=squarish"
+                alt="Bakery"
+                class="w-24 h-24 object-contain"
+              />
+            </div>
+            <h4 class="text-sm font-medium text-center">Bakery</h4>
+          </a>
+          <a
+            href="#"
+            class="group bg-white rounded-lg p-4 border border-gray-200 hover:border-primary transition-colors"
+          >
+            <div
+              class="w-full h-32 rounded-lg bg-purple-50 flex items-center justify-center mb-3 group-hover:bg-purple-100 transition-colors"
+            >
+              <img
+                src="https://readdy.ai/api/search-image?query=snacks%20chips%20cookies%20on%20white%20background%2C%20minimal%20style&width=200&height=200&seq=catm5&orientation=squarish"
+                alt="Snacks"
+                class="w-24 h-24 object-contain"
+              />
+            </div>
+            <h4 class="text-sm font-medium text-center">Snacks</h4>
+          </a>
+          <a
+            href="#"
+            class="group bg-white rounded-lg p-4 border border-gray-200 hover:border-primary transition-colors"
+          >
+            <div
+              class="w-full h-32 rounded-lg bg-orange-50 flex items-center justify-center mb-3 group-hover:bg-orange-100 transition-colors"
+            >
+              <img
+                src="https://readdy.ai/api/search-image?query=beverages%20drinks%20juices%20on%20white%20background%2C%20minimal%20style&width=200&height=200&seq=catm6&orientation=squarish"
+                alt="Beverages"
+                class="w-24 h-24 object-contain"
+              />
+            </div>
+            <h4 class="text-sm font-medium text-center">Beverages</h4>
+          </a>
+        </div>
+        <button
+          id="viewAllProductsBtn"
+          class="w-full bg-gray-100 text-gray-800 py-3 rounded-button font-medium hover:bg-gray-200 transition-colors !rounded-button whitespace-nowrap"
+        >
+          View All Products
+        </button>
+      </div>
+    </div>
+    <!-- Order Success Modal -->
+    <div id="orderSuccessModal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-full max-w-md"
+      >
+        <div class="flex flex-col items-center text-center">
+          <div
+            class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4"
+          >
+            <div
+              class="w-10 h-10 flex items-center justify-center text-green-500"
+            >
+              <i class="ri-check-line ri-2x"></i>
+            </div>
+          </div>
+          <h3 class="text-xl font-bold mb-2">Order Placed Successfully!</h3>
+          <p class="text-sm text-gray-600 mb-6">
+            Your order #VB12345 has been placed successfully. It will be
+            delivered in 10 minutes.
+          </p>
+          <div class="flex space-x-3">
+            <button
+              id="trackOrderBtn"
+              class="bg-primary text-white px-4 py-2 rounded-button font-medium !rounded-button whitespace-nowrap"
+            >
+              Track Order
+            </button>
+            <button
+              id="continueShoppingBtn"
+              class="bg-gray-100 text-gray-800 px-4 py-2 rounded-button font-medium !rounded-button whitespace-nowrap"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Scripts -->
+    <script id="authModalScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const loginBtn = document.getElementById("loginBtn");
+        const authModal = document.getElementById("authModal");
+        const authOverlay = document.getElementById("authOverlay");
+        const closeAuthBtn = document.getElementById("closeAuthBtn");
+        const loginTabBtn = document.getElementById("loginTabBtn");
+        const signupTabBtn = document.getElementById("signupTabBtn");
+        const loginForm = document.getElementById("loginForm");
+        const signupForm = document.getElementById("signupForm");
+        const continueBtn = document.getElementById("continueBtn");
+        const otpForm = document.getElementById("otpForm");
+        const verifyBtn = document.getElementById("verifyBtn");
+        // Toggle password visibility
+        document.querySelectorAll('input[type="password"]').forEach((input) => {
+          const toggleBtn = input.nextElementSibling;
+          toggleBtn.addEventListener("click", () => {
+            const type =
+              input.getAttribute("type") === "password" ? "text" : "password";
+            input.setAttribute("type", type);
+            toggleBtn.innerHTML =
+              type === "password"
+                ? '<i class="ri-eye-line"></i>'
+                : '<i class="ri-eye-off-line"></i>';
+          });
+        });
+        // Tab switching
+        loginTabBtn.addEventListener("click", () => {
+          loginTabBtn.classList.add("bg-primary", "text-white");
+          loginTabBtn.classList.remove("text-gray-600");
+          signupTabBtn.classList.remove("bg-primary", "text-white");
+          signupTabBtn.classList.add("text-gray-600");
+          loginForm.classList.remove("hidden");
+          signupForm.classList.add("hidden");
+        });
+        signupTabBtn.addEventListener("click", () => {
+          signupTabBtn.classList.add("bg-primary", "text-white");
+          signupTabBtn.classList.remove("text-gray-600");
+          loginTabBtn.classList.remove("bg-primary", "text-white");
+          loginTabBtn.classList.add("text-gray-600");
+          signupForm.classList.remove("hidden");
+          loginForm.classList.add("hidden");
+        });
+        // Form validation
+        function validateEmail(email) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        function validatePassword(password) {
+          return password.length >= 6;
+        }
+        function validatePhone(phone) {
+          return /^\d{10}$/.test(phone);
+        }
+        function showError(input, message) {
+          const errorDiv = input.parentElement.querySelector(".error-message");
+          if (!errorDiv) {
+            const div = document.createElement("div");
+            div.className = "error-message text-red-500 text-xs mt-1";
+            div.textContent = message;
+            input.parentElement.appendChild(div);
+          } else {
+            errorDiv.textContent = message;
+          }
+          input.classList.add("border-red-500");
+        }
+        function clearError(input) {
+          const errorDiv = input.parentElement.querySelector(".error-message");
+          if (errorDiv) {
+            errorDiv.remove();
+          }
+          input.classList.remove("border-red-500");
+        }
+        // Login form validation
+        document.getElementById("loginEmail").addEventListener("input", function () {
+          if (!validateEmail(this.value)) {
+            showError(this, "Please enter a valid email address");
+          } else {
+            clearError(this);
+          }
+        });
+        document
+          .getElementById("loginPassword")
+          .addEventListener("input", function () {
+            if (!validatePassword(this.value)) {
+              showError(this, "Password must be at least 6 characters long");
+            } else {
+              clearError(this);
+            }
+          });
+        // Signup form validation
+        document.getElementById("signupName").addEventListener("input", function () {
+          if (this.value.trim().length < 3) {
+            showError(this, "Name must be at least 3 characters long");
+          } else {
+            clearError(this);
+          }
+        });
+        document.getElementById("signupEmail").addEventListener("input", function () {
+          if (!validateEmail(this.value)) {
+            showError(this, "Please enter a valid email address");
+          } else {
+            clearError(this);
+          }
+        });
+        document.getElementById("signupPhone").addEventListener("input", function () {
+          if (!validatePhone(this.value)) {
+            showError(this, "Please enter a valid 10-digit phone number");
+          } else {
+            clearError(this);
+          }
+        });
+        document
+          .getElementById("signupPassword")
+          .addEventListener("input", function () {
+            if (!validatePassword(this.value)) {
+              showError(this, "Password must be at least 6 characters long");
+            } else {
+              clearError(this);
+            }
+          });
+        function openAuthModal() {
+          authModal.classList.remove("hidden");
+          setTimeout(() => {
+            document.querySelector(".auth-modal").classList.add("show");
+          }, 10);
+        }
+        function closeAuthModal() {
+          document.querySelector(".auth-modal").classList.remove("show");
+          setTimeout(() => {
+            authModal.classList.add("hidden");
+            // Reset form
+            phoneForm.classList.remove("hidden");
+            otpForm.classList.add("hidden");
+          }, 300);
+        }
+        loginBtn.addEventListener("click", openAuthModal);
+        closeAuthBtn.addEventListener("click", closeAuthModal);
+        authOverlay.addEventListener("click", closeAuthModal);
+        continueBtn.addEventListener("click", function () {
+          phoneForm.classList.add("hidden");
+          otpForm.classList.remove("hidden");
+          otpForm.classList.add("fade-in");
+        });
+        // Auto-focus next OTP input
+        const otpInputs = document.querySelectorAll("#otpForm input");
+        otpInputs.forEach((input, index) => {
+          input.addEventListener("input", function () {
+            if (this.value.length === 1 && index < otpInputs.length - 1) {
+              otpInputs[index + 1].focus();
+            }
+          });
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Backspace" && this.value.length === 0 && index > 0) {
+              otpInputs[index - 1].focus();
+            }
+          });
+        });
+        verifyBtn.addEventListener("click", closeAuthModal);
+      });
+    </script>
+    <script id="cartScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const cartBtn = document.getElementById("cartBtn");
+        const cartSidebar = document.getElementById("cartSidebar");
+        const closeCartBtn = document.getElementById("closeCartBtn");
+        const emptyCart = document.getElementById("emptyCart");
+        const cartItems = document.getElementById("cartItems");
+        const cartFooter = document.getElementById("cartFooter");
+        const startShoppingBtn = document.getElementById("startShoppingBtn");
+        function openCart() {
+          cartSidebar.classList.add("translate-x-0");
+          cartSidebar.classList.remove("translate-x-full");
+          // For demo purposes, show cart with items
+          setTimeout(() => {
+            emptyCart.classList.add("hidden");
+            cartItems.classList.remove("hidden");
+            cartFooter.classList.remove("hidden");
+          }, 1000);
+        }
+        function closeCart() {
+          cartSidebar.classList.remove("translate-x-0");
+          cartSidebar.classList.add("translate-x-full");
+          // Reset to empty cart for demo
+          setTimeout(() => {
+            emptyCart.classList.remove("hidden");
+            cartItems.classList.add("hidden");
+            cartFooter.classList.add("hidden");
+          }, 300);
+        }
+        cartBtn.addEventListener("click", openCart);
+        closeCartBtn.addEventListener("click", closeCart);
+        startShoppingBtn.addEventListener("click", closeCart);
+      });
+    </script>
+    <script id="addressScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const addressModal = document.getElementById("addressModal");
+        const addressOverlay = document.getElementById("addressOverlay");
+        const closeAddressBtn = document.getElementById("closeAddressBtn");
+        const saveAddressBtn = document.getElementById("saveAddressBtn");
+        const orderSuccessModal = document.getElementById("orderSuccessModal");
+        const trackOrderBtn = document.getElementById("trackOrderBtn");
+        const continueShoppingBtn = document.getElementById("continueShoppingBtn");
+        // Custom radio buttons
+        const radioButtons = document.querySelectorAll('input[name="addressType"]');
+        radioButtons.forEach((radio) => {
+          radio.addEventListener("change", function () {
+            // Reset all
+            document
+              .querySelectorAll('input[name="addressType"] + div div')
+              .forEach((dot) => {
+                dot.classList.add("hidden");
+              });
+            document
+              .querySelectorAll('input[name="addressType"] + div')
+              .forEach((border) => {
+                border.classList.remove("border-primary", "bg-primary");
+              });
+            // Set selected
+            if (this.checked) {
+              const dot = this.nextElementSibling.querySelector("div");
+              dot.classList.remove("hidden");
+              this.nextElementSibling.classList.add("border-primary", "bg-primary");
+            }
+          });
+        });
+        // Initial state for the first radio button
+        if (radioButtons[0].checked) {
+          const dot = radioButtons[0].nextElementSibling.querySelector("div");
+          dot.classList.remove("hidden");
+          radioButtons[0].nextElementSibling.classList.add(
+            "border-primary",
+            "bg-primary",
+          );
+        }
+        function openAddressModal() {
+          addressModal.classList.remove("hidden");
+          setTimeout(() => {
+            document.querySelector("#addressModal .auth-modal").classList.add("show");
+          }, 10);
+        }
+        function closeAddressModal() {
+          document
+            .querySelector("#addressModal .auth-modal")
+            .classList.remove("show");
+          setTimeout(() => {
+            addressModal.classList.add("hidden");
+          }, 300);
+        }
+        function showOrderSuccess() {
+          orderSuccessModal.classList.remove("hidden");
+        }
+        function hideOrderSuccess() {
+          orderSuccessModal.classList.add("hidden");
+        }
+        // For demo purposes, connect cart checkout to address modal
+        document
+          .querySelector("#cartFooter button")
+          .addEventListener("click", function () {
+            document.getElementById("cartSidebar").classList.add("translate-x-full");
+            document.getElementById("cartSidebar").classList.remove("translate-x-0");
+            setTimeout(() => {
+              openAddressModal();
+            }, 300);
+          });
+        closeAddressBtn.addEventListener("click", closeAddressModal);
+        addressOverlay.addEventListener("click", closeAddressModal);
+        saveAddressBtn.addEventListener("click", function () {
+          closeAddressModal();
+          setTimeout(() => {
+            showOrderSuccess();
+          }, 300);
+        });
+        trackOrderBtn.addEventListener("click", hideOrderSuccess);
+        continueShoppingBtn.addEventListener("click", hideOrderSuccess);
+      });
+    </script>
+    <script id="categoryModalScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const orderNowBtn = document.getElementById("orderNowBtn");
+        const categoryModal = document.getElementById("categoryModal");
+        const closeCategoryBtn = document.getElementById("closeCategoryBtn");
+        const viewAllProductsBtn = document.getElementById("viewAllProductsBtn");
+        function openCategoryModal() {
+          categoryModal.classList.remove("hidden");
+          categoryModal.querySelector(".bg-white").classList.add("fade-in");
+        }
+        function closeCategoryModal() {
+          categoryModal.classList.add("hidden");
+        }
+        orderNowBtn.addEventListener("click", openCategoryModal);
+        closeCategoryBtn.addEventListener("click", closeCategoryModal);
+        categoryModal
+          .querySelector(".absolute.inset-0")
+          .addEventListener("click", closeCategoryModal);
+        viewAllProductsBtn.addEventListener("click", function () {
+          closeCategoryModal();
+          // Redirect to products page or scroll to products section
+          window.location.href = "#products";
+        });
+      });
+    </script>
+    <script id="productScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add to cart functionality
+        const addButtons = document.querySelectorAll(
+          "button:not(#loginBtn):not(#cartBtn):not(#closeCartBtn):not(#startShoppingBtn):not(#continueBtn):not(#verifyBtn):not(#closeAuthBtn):not(#closeAddressBtn):not(#saveAddressBtn):not(#trackOrderBtn):not(#continueShoppingBtn)",
+        );
+        addButtons.forEach((button) => {
+          if (button.textContent.trim() === "Add") {
+            button.addEventListener("click", function () {
+              // Update cart count
+              const cartCountElements = document.querySelectorAll(
+                "#cartBtn .absolute, nav .absolute",
+              );
+              cartCountElements.forEach((element) => {
+                const currentCount = parseInt(element.textContent);
+                element.textContent = currentCount + 1;
+              });
+              // Show quick feedback
+              const originalText = this.textContent;
+              this.textContent = "Added";
+              this.classList.add("bg-green-500");
+              setTimeout(() => {
+                this.textContent = originalText;
+                this.classList.remove("bg-green-500");
+              }, 1000);
+            });
+          }
+        });
+      });
+    </script>
+  </body>
 </html>
